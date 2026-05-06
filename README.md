@@ -17,9 +17,8 @@ This repository contains everything needed to reproduce or verify the numerical 
 | `requirements.txt`                  | Minimal pip dependencies for the verifier (`pandas`, `numpy`).                                               |
 | `NeurIPS2026_1296_pipeline.ipynb`   | The full analysis pipeline, identical to the copy inside the tarball. Re-run this to regenerate every CSV.   |
 | `BUNDLE_README.md`                  | Copy of the README inside the tarball. Read this without extracting if you want re-run instructions.         |
-| `neurips_1296_bundle.tar.gz`        | **Reproducibility tarball.** Data, canonical outputs, source code, **paper sources (`.tex` + PDF)**, internal README, SHA-256 manifest. |
 
-There are two ways to use this repo, depending on what you want to do.
+The **reproducibility tarball** itself (`neurips_1296_bundle.tar.gz`, ~73 MB) is too large for the repo's flat tree, so it is published under [Releases](../../releases) instead. See instructions below.
 
 ---
 
@@ -35,13 +34,28 @@ Then it compares the two within tolerance. **Neither side hard-codes expected va
 ### From the command line
 
 ```bash
+# 1. Clone the repo and install verifier dependencies
 git clone https://github.com/author0725/NeurIPS-1296.git
 cd NeurIPS-1296
-pip install -r requirements.txt              # only pandas + numpy
+pip install -r requirements.txt          # only pandas + numpy
+
+# 2. Download the tarball from Releases (look for neurips_1296_bundle.tar.gz)
+#    https://github.com/author0725/NeurIPS-1296/releases/latest
+#    Place the downloaded file in this directory.
+
+# 3. Run the verifier
 python verify_paper_numbers.py --tarball neurips_1296_bundle.tar.gz
 ```
 
 The paper sources are auto-resolved from the tarball's `paper/` subdirectory — no extra arguments needed.
+
+If you prefer to download the tarball directly from the command line:
+
+```bash
+# Replace v1.0 with the latest release tag if it has changed
+curl -L -o neurips_1296_bundle.tar.gz \
+    https://github.com/author0725/NeurIPS-1296/releases/download/v1.0/neurips_1296_bundle.tar.gz
+```
 
 Expected output (truncated):
 
@@ -81,7 +95,13 @@ The script needs only the standard library plus `pandas` and `numpy`. No GPU, no
 
 Open `verify_paper_numbers.ipynb` directly in Colab (File → Upload notebook).
 
-The notebook prompts you to upload four files: `neurips_1296_bundle.tar.gz`, `paper_extractors.py`, `canonical_extractors.py`, `verifier_core.py`. Then run all cells. Total runtime: ~1 minute (most of which is uploading the tarball).
+The notebook prompts you to upload four files:
+- `neurips_1296_bundle.tar.gz` — download from the [Releases](../../releases/latest) page first
+- `paper_extractors.py`
+- `canonical_extractors.py`
+- `verifier_core.py`
+
+Then run all cells. Total runtime: ~1 minute (most of which is uploading the tarball).
 
 ### What the verifier checks
 
@@ -116,10 +136,11 @@ The full mapping is in `verifier_core.py` as the `CHECKS` list. **That file is t
 
 If you want to regenerate every CSV from the data, follow the instructions in `BUNDLE_README.md` (which is also inside the tarball at `NeurIPS2026_1296/README.md`). The short version:
 
-1. Extract `neurips_1296_bundle.tar.gz` to your Google Drive at `MyDrive/NeurIPS2026_1296/`.
-2. Open `NeurIPS2026_1296_pipeline.ipynb` in Colab (or use the copy inside the tarball — they are identical).
-3. Runtime → Run all.
-4. After completion, point the verifier at your re-generated tree:
+1. Download `neurips_1296_bundle.tar.gz` from the [Releases](../../releases/latest) page.
+2. Extract it to your Google Drive at `MyDrive/NeurIPS2026_1296/`.
+3. Open `NeurIPS2026_1296_pipeline.ipynb` in Colab (or use the copy inside the tarball — they are identical).
+4. Runtime → Run all.
+5. After completion, point the verifier at your re-generated tree:
 
    ```bash
    python verify_paper_numbers.py \
@@ -137,7 +158,7 @@ A full re-run requires:
 
 ---
 
-## Repository layout (tree)
+## Repository layout
 
 ```
 .
@@ -149,10 +170,12 @@ A full re-run requires:
 ├── canonical_extractors.py            ← canonical-side runtime extractor module
 ├── verifier_core.py                   ← CHECKS list + runner
 ├── NeurIPS2026_1296_pipeline.ipynb    ← full analysis notebook
-├── BUNDLE_README.md                   ← copy of the README inside the tarball
-└── neurips_1296_bundle.tar.gz         ← canonical tarball (~73 MB)
+└── BUNDLE_README.md                   ← copy of the README inside the tarball
+
+Releases (downloaded separately, ~73 MB):
+└── neurips_1296_bundle.tar.gz
     └── NeurIPS2026_1296/
-        ├── README.md                  ← internal README
+        ├── README.md                  ← internal README (same as BUNDLE_README.md)
         ├── MANIFEST.sha256            ← SHA-256 of every file
         ├── data/                      ← input panels (3 CSVs)
         ├── src/                       ← Python modules (NAVAR, DYNOTEARS, etc.)
